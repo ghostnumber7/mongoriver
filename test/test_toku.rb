@@ -1,7 +1,7 @@
 require 'mongoriver'
 require 'mongo'
 require 'minitest/autorun'
-require 'mocha/setup'
+require 'mocha/minitest'
 
 describe 'Mongoriver::Toku' do
   def create_op(ops)

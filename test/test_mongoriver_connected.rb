@@ -1,7 +1,7 @@
 require 'mongoriver'
 require 'mongo'
 require 'minitest/autorun'
-require 'mocha/setup'
+require 'mocha/minitest'
 
 # Connected tests: run these with eg MONGO_SERVER=localhost:27017
 
