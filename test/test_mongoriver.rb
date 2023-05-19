@@ -1,7 +1,7 @@
 require 'mongoriver'
 require 'mongo'
 require 'minitest/autorun'
-require 'mocha/setup'
+require 'mocha/minitest'
 
 describe 'Mongoriver::Stream' do
   def create_op(op)
@@ -12,7 +12,7 @@ describe 'Mongoriver::Stream' do
   before do
     conn = stub(:use => nil)
     buildinfo_command = stub(:documents => [{}])
-    conn.expects(:command).with(:buildinfo => 1).returns(buildinfo_command)
+    conn.expects(:command).with({:buildinfo => 1}).returns(buildinfo_command)
     @tailer = Mongoriver::Tailer.new([conn], :existing)
     @outlet = Mongoriver::AbstractOutlet.new
     @stream = Mongoriver::Stream.new(@tailer, @outlet)

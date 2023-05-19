@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require 'mocha/setup'
+require 'mocha/minitest'
 require 'mongo'
 require 'mongoriver'
 require_relative './cursor_stub'

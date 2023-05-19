@@ -1,19 +1,18 @@
 require 'mongoriver'
 require 'mongo'
 require 'minitest/autorun'
-require 'mocha/setup'
+require 'mocha/minitest'
 require_relative './cursor_stub'
 
 def mocked_mongo()
   mongo_connection = stub()
-  use = stub()
   collection = stub()
   mongo_connection.expects(:use).with('_mongoriver').returns({ 'oplog-tailers' => collection })
 
   # mongodb
   buildinfo_command = stub()
   buildinfo_command.expects(:documents).returns([{}])
-  mongo_connection.expects(:command).with(:buildinfo => 1).returns(buildinfo_command)
+  mongo_connection.expects(:command).with({:buildinfo => 1}).returns(buildinfo_command)
 
   [mongo_connection, collection]
 end
@@ -67,7 +66,7 @@ describe 'Mongoriver::PersistentTailer' do
 
   it 'should tail from position' do
     @tailer.expects(:read_position).returns('foo')
-    Mongoriver::Tailer.any_instance.expects(:tail).with(:from => 'foo')
+    Mongoriver::Tailer.any_instance.expects(:tail).with({:from => 'foo'})
 
     @tailer.tail
   end
