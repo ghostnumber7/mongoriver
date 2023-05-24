@@ -125,8 +125,10 @@ module Mongoriver
       query = build_tail_query(opts)
 
       cursor_type = opts[:dont_wait] ? :tailable : :tailable_await
-      oplog_replay = query['ts'] ? true : false
-      mongo_opts = {:max_time_ms => 1000, :cursor_type => cursor_type, :oplog_replay => oplog_replay}.merge(opts[:mongo_opts] || {})
+      # oplog_replay = query['ts'] ? true : false
+      ## NOTE: Removed because cursor starts over from the first item after a timeout, and don't know how to fix that.
+      # mongo_opts = {:max_time_ms => 1000, :cursor_type => cursor_type, :oplog_replay => oplog_replay}.merge(opts[:mongo_opts] || {})
+      mongo_opts = {:timeout => false, :cursor_type => cursor_type}.merge(opts[:mongo_opts] || {})
       @cursor = oplog_collection.find(query, mongo_opts).to_enum.lazy
     end
 
@@ -203,6 +205,10 @@ module Mongoriver
         # Allowing the cursor operation to complete with a time-out lets us
         # shut down the tailer cleanly (and if there's no request to do so,
         # we'll create a new cursor for the next pass).
+        # NOTE: Removed because cursor starts over from the first item after a timeout, and don't know how to fix that.
+        # Behaves something like this:
+        # * 1st cursor.peek -> raises timeout
+        # * 2nd cursor.peek -> returns first item (and it should raise stop iteration in theory)
         if ex.message.match(/operation exceeded time limit/)
           false
         else
